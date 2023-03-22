@@ -18,4 +18,6 @@ int main(void)
 			sum += z;
 	}
 	printf("%d\n", sum);
+
+	return (0);
 }
