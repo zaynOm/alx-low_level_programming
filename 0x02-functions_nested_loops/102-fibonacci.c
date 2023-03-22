@@ -1,6 +1,11 @@
 #include <stdio.h>
 /**
+ * main - entry point
  *
+ * Descreption: this program prints the first 50 Fibonacci numbers
+ * starting from 1 and 2.
+ *
+ * Return: Always 0.
  */
 int main(void)
 {
@@ -8,7 +13,7 @@ int main(void)
 	unsigned long y = 1;
 	unsigned long sum = 1;
 	int i;
-	
+
 	for (i = 0; i < 49; i++)
 	{
 		printf("%lu, ", sum);
@@ -17,6 +22,6 @@ int main(void)
 		y = sum;
 	}
 	printf("%lu\n", sum);
-	
+
 	return (0);
 }
