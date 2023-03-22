@@ -9,9 +9,9 @@
  */
 int main(void)
 {
-	unsigned int x = 0;
-	unsigned int y = 1;
-	unsigned int z;
+	unsigned long int x = 0;
+	unsigned long int y = 1;
+	unsigned long int z;
 	int i;
 
 	for (i = 0; i < 97; i++)
@@ -19,8 +19,8 @@ int main(void)
 		z = x + y;
 		x = y;
 		y = z;
-		printf("%u, ", z);
+		printf("%lu, ", z);
 	}
-	printf("%u\n", z);
+	printf("%lu\n", z);
 	return (0);
 }
