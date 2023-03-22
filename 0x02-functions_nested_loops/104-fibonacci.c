@@ -9,18 +9,20 @@
  */
 int main(void)
 {
-	unsigned long int x = 0;
-	unsigned long int y = 1;
-	unsigned long int z;
+	long double x = 0;
+	long double y = 0.5;
+	long double z;
 	int i;
 
-	for (i = 0; i < 97; i++)
+	for (i = 0; i < 98; i++)
 	{
 		z = x + y;
 		x = y;
 		y = z;
-		printf("%lu, ", z);
+		if (i == 97)
+			printf("%.Lf\n", z * 2);
+		else
+			printf("%.Lf, ", z * 2);
 	}
-	printf("%lu\n", z);
 	return (0);
 }
