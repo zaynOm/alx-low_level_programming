@@ -1,0 +1,5 @@
+# files to ignore
+*.o
+*.out
+_putchar.c
+main.c
