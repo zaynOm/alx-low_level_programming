@@ -8,14 +8,11 @@
 char *cap_string(char *s)
 {
 	int i = 0, j;
-	char sepr[] = " ,;.!?\"(){}\n";
+	char sepr[] = " ,;.!?\"()\t{}\n";
 
 	while (s[i])
 	{
 		j = 0;
-
-		if (s[i] == '\t')
-			s[i] = ' ';
 
 		while (sepr[j])
 		{
