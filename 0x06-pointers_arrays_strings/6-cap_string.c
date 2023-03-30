@@ -8,16 +8,18 @@
 char *cap_string(char *s)
 {
 	int i = 0, j;
-	char c;
-	char sepr[] = " ,;.!?\"(){}\t\n";
+	char sepr[] = " ,;.!?\"(){}\n";
 
 	while (s[i])
 	{
 		j = 0;
-		c = s[i];
+
+		if (s[i] == '\t')
+			s[i] = ' ';
+
 		while (sepr[j])
 		{
-			if (c == sepr[j])
+			if (s[i] == sepr[j])
 				if (s[i + 1] >= 'a' && s[i + 1] <= 'z')
 					s[i + 1] -= 32;
 			j++;
