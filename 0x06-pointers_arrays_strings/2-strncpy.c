@@ -1,34 +1,24 @@
 /**
- * _strncpy - copies a string
+ *_strncpy - function that copies a string
  *
- * @dest: a string
- * @src: the string to copy
+ * @src: The source of strings
+ * @dest: The destination of the string
+ * @n: The length of int
  *
- * Return: a pointer
+ * Return: pointer to the resulting string dest
  */
 char *_strncpy(char *dest, char *src, int n)
 {
-	char s[98];
-	int i = 0, j = 0;
+int i;
 
-	while (dest[i])
+	for (i = 0; i < n && *(src + i); i++)
 	{
-		s[i] = dest[i];
-		i++;
+		*(dest + i) = *(src + i);
 	}
-	i = 0;
-
-	while (i < n && src[i])
+	for (; i < n; i++)
 	{
-		dest[i] = src[i];
-		i++;
+	*(dest + i) = '\0';
 	}
-	while (s[j])
-	{
-		dest[i] = s[j];
-		i++;
-		j++;
-	}
-	dest[i] = '\0';
 	return (dest);
+
 }
