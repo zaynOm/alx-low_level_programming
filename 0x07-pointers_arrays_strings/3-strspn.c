@@ -10,22 +10,27 @@
 unsigned int _strspn(char *s, char *accept)
 {
 	int i;
+	int found;
 	unsigned int sum = 0;
 
-	while (*accept)
+	while (*s)
 	{
 		i = 0;
-		while (s[i])
+		found = 0;
+		while (accept[i])
 		{
-			if (s[i] == *accept)
+			if (*s == accept[i])
 			{
-				sum += 1;
+				found = 1;
 				break;
 			}
 			i++;
 		}
-		accept++;
+		if (!found)
+			return (sum);
+		s++;
+		sum += 1;
 	}
-	return (sum + 1);
+	return (sum);
 
 }
