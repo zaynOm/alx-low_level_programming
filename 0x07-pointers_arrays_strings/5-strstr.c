@@ -19,10 +19,10 @@ char *_strstr(char *haystack, char *needle)
 			haystack++;
 			b++;
 		}
-		
+
 		if (!*b)
 			return (a);
-		
+
 		haystack++;
 	}
 	return ('\0');
