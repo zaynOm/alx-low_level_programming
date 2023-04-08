@@ -14,6 +14,8 @@ int main(int argc, char **argv)
 {
 	int num;
 	int cn = 0;
+	int coins[5] = {25, 10, 5, 2, 1};
+	int i;
 
 	(void) argc;
 
@@ -22,30 +24,19 @@ int main(int argc, char **argv)
 		printf("Error\n");
 		return (1);
 	}
+
 	num =  atoi(argv[1]);
 
-	if (num / 25 >= 1)
+	for (i = 0; i < 5; i++)
 	{
-		cn += num / 25;
-		num = num - (num / 25) * 25;
+		int d = num / coins[i];
+
+		if (d >= 1)
+		{
+			cn += d;
+			num = num - d * coins[i];
+		}
 	}
-	if (num / 10 >= 1)
-	{
-		cn += num / 10;
-		num = num - (num / 10) * 10;
-	}
-	if (num / 5 >= 1)
-	{
-		cn += num / 5;
-		num = num - (num / 5) * 5;
-	}
-	if (num / 2 >= 1)
-	{
-		cn += num / 2;
-		num = num - (num / 2) * 2;
-	}
-	if (num == 1)
-		cn++;
 
 	printf("%d\n", cn);
 	return (0);
