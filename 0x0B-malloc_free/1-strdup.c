@@ -13,7 +13,7 @@ unsigned int _strlen(char *str)
 	for (i = 0; str[i]; i++)
 	{}
 
-	return (i);
+	return (i + 1);
 }
 
 
@@ -30,6 +30,9 @@ char *_strdup(char *str)
 	char *s;
 	int i;
 	unsigned int size;
+
+	if (str == NULL)
+		return (NULL);
 
 	size = _strlen(str);
 
