@@ -17,14 +17,17 @@ int **alloc_grid(int width, int height)
 
 	grid = malloc(sizeof(int *) * height);
 
+	if (!grid)
+		return (NULL);
+
 	for (i = 0; i < height; i++)
 		grid[i] = malloc(sizeof(int) * width);
 
-	if (grid == NULL)
+	if (!grid)
 	{
 		for (i = 0; i < height; i++)
-		free(grid[i]);
-	
+			free(grid[i]);
+
 		free(grid);
 		return (NULL);
 	}
