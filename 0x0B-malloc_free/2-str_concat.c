@@ -29,7 +29,7 @@ int _strlen(char *s)
 char *str_concat(char *s1, char *s2)
 {
 	int size1 = _strlen(s1);
-	int size2 = _strlen(s2) + 1;
+	int size2 = _strlen(s2);
 	int i, j;
 	char *s;
 
@@ -44,5 +44,6 @@ char *str_concat(char *s1, char *s2)
 	for (j = 0; j < size2; i++, j++)
 		s[i] = s2[j];
 
+	s[size1 + size2 + 1] = '\0';
 	return (s);
 }
