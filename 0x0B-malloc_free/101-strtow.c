@@ -14,7 +14,7 @@ int len(char *s, int *wc)
 	{
 		if (s[i] != ' ')
 			sum++;
-		if (s[i] != ' ' && s[i + 1] == ' ')
+		if (s[i] != ' ' && s[i + 1] == ' ' || s[i + 1] == '\0')
 			*wc += 1;
 	}
 
