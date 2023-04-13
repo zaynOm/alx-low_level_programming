@@ -14,10 +14,10 @@ char *string_nconcat(char *s1, char *s2, unsigned int n)
 
 	i = j = lens1 = lens2 = 0;
 
-	while (s1[lens1])
+	while (s1 && s1[lens1])
 		lens1++;
 
-	while (s2[lens2])
+	while (s2 && s2[lens2])
 		lens2++;
 
 	len = (lens2 < n) ? lens2 : n;
