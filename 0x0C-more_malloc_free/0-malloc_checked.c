@@ -11,7 +11,7 @@ void *malloc_checked(unsigned int b)
 
 	ptr = malloc(b);
 
-	if (b == 2147483647)
+	if (b >= 2147483647)
 		exit(98);
 
 	return (ptr);
