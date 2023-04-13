@@ -32,6 +32,9 @@ char *string_nconcat(char *s1, char *s2, unsigned int n)
 
 	str = malloc(sizeof(*str) * (_strlen(s1) + s2len + 1));
 
+	if (!str)
+		return (NULL);
+
 	while (s1 && s1[i])
 	{
 		str[i] = s1[i];
