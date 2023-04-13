@@ -5,9 +5,9 @@
  *
  * Return: the length
  */
-int _strlen(char *s)
+unsigned int _strlen(char *s)
 {
-	int i = 0;
+	unsigned int i = 0;
 
 	while (s && s[i])
 		i++;
@@ -27,7 +27,7 @@ char *string_nconcat(char *s1, char *s2, unsigned int n)
 {
 	char *str;
 	unsigned int i = 0, j = 0;
-
+	
 	str = malloc(sizeof(*str) * (_strlen(s1) + n + 1));
 
 	while (s1 && s1[i])
