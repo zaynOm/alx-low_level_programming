@@ -9,7 +9,7 @@ int _strlen(char *s)
 {
 	int i = 0;
 
-	while (s[i])
+	while (s && s[i])
 		i++;
 
 	return (i);
@@ -30,13 +30,13 @@ char *string_nconcat(char *s1, char *s2, unsigned int n)
 
 	str = malloc(sizeof(*str) * (_strlen(s1) + n + 1));
 
-	while (s1[i])
+	while (s1 && s1[i])
 	{
 		str[i] = s1[i];
 		i++;
 	}
 
-	while (j < n)
+	while (s2 && j < n)
 	{
 		str[i] = s2[j];
 		i++;
