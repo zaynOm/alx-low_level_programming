@@ -10,14 +10,14 @@
 
 int is_number(char *s)
 {
-    int i;
+	int i;
 
-    for (i = 0; s[i]; i++)
-    {
-        if (!(s[i] >= '0' && s[i] <= '9'))
-            return (0);
-    }
-    return (1);
+	for (i = 0; s[i]; i++)
+	{
+		if (!(s[i] >= '0' && s[i] <= '9'))
+			return (0);
+	}
+	return (1);
 }
 
 /**
@@ -26,8 +26,8 @@ int is_number(char *s)
 
 void error(void)
 {
-    printf("Error\n");
-    exit(98);
+	printf("Error\n");
+	exit(98);
 }
 
 /**
@@ -39,11 +39,11 @@ void error(void)
 
 int str_len(char *str)
 {
-    int i = 0;
+	int i = 0;
 
-    while (str[i])
-        i++;
-    return (i);
+	while (str[i])
+		i++;
+	return (i);
 }
 
 /**
@@ -57,28 +57,28 @@ int str_len(char *str)
 
 void compute_mult(int len1, int len2, char *s1, char *s2, int *result)
 {
-    int carry = 0;
-    int digit1 = 0;
-    int digit2 = 0;
-    int i, j;
+	int carry = 0;
+	int digit1 = 0;
+	int digit2 = 0;
+	int i, j;
 
-    for (i = 0; i < len1 + len2 + 1; i++)
-        result[i] = 0;
+	for (i = 0; i < len1 + len2 + 1; i++)
+		result[i] = 0;
 
-    for (i = len1 - 1; i >= 0; i--)
-    {
-        digit1 = s1[i] - '0';
-        carry = 0;
-        for (j = len2 - 1; j >= 0; j--)
-        {
-            digit2 = s2[j] - '0';
-            carry += result[i + j + 1] + (digit1 * digit2);
-            result[i + j + 1] = carry % 10;
-            carry /= 10;
-        }
-        if (carry > 0)
-            result[i + j + 1] = carry;
-    }
+	for (i = len1 - 1; i >= 0; i--)
+	{
+		digit1 = s1[i] - '0';
+		carry = 0;
+		for (j = len2 - 1; j >= 0; j--)
+		{
+			digit2 = s2[j] - '0';
+			carry += result[i + j + 1] + (digit1 * digit2);
+			result[i + j + 1] = carry % 10;
+			carry /= 10;
+		}
+		if (carry > 0)
+			result[i + j + 1] = carry;
+	}
 }
 
 /**
@@ -91,33 +91,33 @@ void compute_mult(int len1, int len2, char *s1, char *s2, int *result)
 
 int main(int ac, char *av[])
 {
-    int len1 = 0, len2 = 0, *result;
-    char *s1, *s2;
-    int checker = 0;
-    int i;
+	int len1 = 0, len2 = 0, *result;
+	char *s1, *s2;
+	int checker = 0;
+	int i;
 
-    if (ac != 3)
-        error();
-    if (!(is_number(av[1]) && is_number(av[2])))
-        error();
-    s1 = av[1];
-    s2 = av[2];
-    len1 = str_len(s1);
-    len2 = str_len(s2);
-    result = malloc(sizeof(int) * (len1 + len2 + 1));
-    for (i = 0; i < len1 + len2 + 1; i++)
-        result[i] = 0;
-    compute_mult(len1, len2, s1, s2, result);
-    for (i = 0; i < len1 + len2; i++)
-    {
-        if (result[i])
-            checker = 1;
-        if (checker)
-            putchar(result[i] + 48);
-    }
-    if (checker == 0)
-        putchar('0');
-    putchar('\n');
-    free(result);
-    return (0);
+	if (ac != 3)
+		error();
+	if (!(is_number(av[1]) && is_number(av[2])))
+		error();
+	s1 = av[1];
+	s2 = av[2];
+	len1 = str_len(s1);
+	len2 = str_len(s2);
+	result = malloc(sizeof(int) * (len1 + len2 + 1));
+	for (i = 0; i < len1 + len2 + 1; i++)
+		result[i] = 0;
+	compute_mult(len1, len2, s1, s2, result);
+	for (i = 0; i < len1 + len2; i++)
+	{
+		if (result[i])
+			checker = 1;
+		if (checker)
+			putchar(result[i] + 48);
+	}
+	if (checker == 0)
+		putchar('0');
+	putchar('\n');
+	free(result);
+	return (0);
 }
