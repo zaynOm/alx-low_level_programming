@@ -1,22 +1,5 @@
 #include <stdlib.h>
 /**
- * _ptrncpy - copys the values from a pointer to another one
- * @s: pointer to copy to
- * @ptr: pointer to copy from
- * @len: number of values to copy
- */
-void _ptrncpy(char *s, char *ptr, int len)
-{
-	int i = 0;
-
-	while (i < len)
-	{
-		s[i] = ptr[i];
-		i++;
-	}
-}
-
-/**
  * _realloc - reallocates a memory block using malloc and free
  * @ptr: pointer to the memory previously allocated
  * @old_size: the size of the allocated space for ptr
@@ -26,8 +9,9 @@ void _ptrncpy(char *s, char *ptr, int len)
  */
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {
-	void *s;
-	unsigned int len;
+	char *s;
+	char *p = ptr;
+	unsigned int i, len;
 
 	if (old_size == new_size)
 		return (ptr);
@@ -42,7 +26,8 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 
 	len = (old_size < new_size) ? old_size : new_size;
 	if (ptr != NULL)
-		_ptrncpy(s, ptr, len);
+		for (i = 0; i < len; i++)
+			s[i] = p[i];
 	free(ptr);
 	return (s);
 }
