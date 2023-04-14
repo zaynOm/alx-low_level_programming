@@ -26,7 +26,7 @@ void _ptrncpy(char *s, char *ptr, int len)
  */
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {
-	char *s;
+	void *s;
 	unsigned int len;
 
 	if (old_size == new_size)
@@ -44,5 +44,5 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 	if (ptr)
 		_ptrncpy(s, ptr, len);
 	free(ptr);
-	return ((void *)s);
+	return (s);
 }
