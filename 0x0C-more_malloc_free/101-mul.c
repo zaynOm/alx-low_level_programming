@@ -55,8 +55,6 @@ int *_atoi(char *s, int len)
 	int *num;
 
 	num = malloc(sizeof(*num) * len);
-	if (!num)
-		exit_error();
 	while (s[i])
 	{
 		if (s[i] > 47 && s[i] < 58)
@@ -115,8 +113,6 @@ int main(int ac, char **av)
 	num1 = _atoi(av[1], len1);
 	num2 = _atoi(av[2], len2);
 	res = malloc(sizeof(*res) * (len1 + len2));
-	if (!res)
-		exit_error();
 	for (; res[i]; i++)
 		res[i] = 0;
 
