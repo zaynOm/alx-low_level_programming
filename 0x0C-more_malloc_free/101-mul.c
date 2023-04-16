@@ -1,123 +1,136 @@
 #include <stdlib.h>
 #include <stdio.h>
-
 /**
- * is_number - checks if a string is a number
- * @s: the string to check
- *
- * Return: 1 if s is a number, 0 otherwise
+ * exit_error - prints Error then it exits with 98 code
  */
-
-int is_number(char *s)
-{
-	int i;
-
-	for (i = 0; s[i]; i++)
-	{
-		if (!(s[i] >= '0' && s[i] <= '9'))
-			return (0);
-	}
-	return (1);
-}
-
-/**
- * error - prints an error message and exits the program with code 98
- */
-
-void error(void)
+void exit_error(void)
 {
 	printf("Error\n");
 	exit(98);
 }
 
 /**
- * str_len - calculates the length of a string
- * @str: the string to calculate the length of
+ * length - counts the length of a string
+ * @str: a string
  *
  * Return: the length of str
  */
+int length(char *str)
+{
+	int l = 0;
 
-int str_len(char *str)
+	while (str[l])
+		l++;
+	return (l);
+}
+
+/**
+ * is_digit - checks wether a string is a number or not
+ * @str: a string
+ * @len: the length of str
+ *
+ * Return: 0 if str contains a non digit character, otherwise 1
+ */
+int is_digit(char *str, int len)
+{
+	while (len >= 0)
+	{
+		if (str[len] < '0' || '9' < str[len])
+			return (0);
+		len--;
+	}
+	return (1);
+}
+
+/**
+ * _atoi - converts a string of numbers into an array of numbers
+ * @s: a string
+ * @len: length of s
+ *
+ * Return: a pointer to the created array of numbers
+ */
+int *_atoi(char *s, int len)
 {
 	int i = 0;
+	int *num;
 
-	while (str[i])
-		i++;
-	return (i);
-}
-
-/**
- * compute_mult - computes the product of two numbers represented as strings
- * @len1: the length of the first number string
- * @len2: the length of the second number string
- * @s1: the first number string
- * @s2: the second number string
- * @result: an array to store the resulting product
- */
-
-void compute_mult(int len1, int len2, char *s1, char *s2, int *result)
-{
-	int carry = 0;
-	int digit1 = 0;
-	int digit2 = 0;
-	int i, j;
-
-	for (i = 0; i < len1 + len2 + 1; i++)
-		result[i] = 0;
-
-	for (i = len1 - 1; i >= 0; i--)
+	num = malloc(sizeof(*num) * len);
+	if (!num)
+		exit_error();
+	while (s[i])
 	{
-		digit1 = s1[i] - '0';
-		carry = 0;
-		for (j = len2 - 1; j >= 0; j--)
-		{
-			digit2 = s2[j] - '0';
-			carry += result[i + j + 1] + (digit1 * digit2);
-			result[i + j + 1] = carry % 10;
-			carry /= 10;
-		}
-		if (carry > 0)
-			result[i + j + 1] = carry;
+		if (s[i] > 47 && s[i] < 58)
+			num[i] = s[i] - 48;
+		i++;
 	}
+	return (num);
 }
 
 /**
- * main - the entry point of the program
- * @ac: the number of command-line arguments
- * @av: an array of strings representing the command-line arguments
- *
- * Return: 0 on success, 98 on failure
+ * print_result - prints result of multiplication followed by a new line
+ * @res: array of integers
+ * @len1: integer
+ * @len2: integer
  */
-
-int main(int ac, char *av[])
+void print_result(int *res, int len1, int len2)
 {
-	int len1 = 0, len2 = 0, *result;
-	char *s1, *s2;
-	int checker = 0;
-	int i;
+	int i, not_zero = 0;
 
-	if (ac != 3)
-		error();
-	if (!(is_number(av[1]) && is_number(av[2])))
-		error();
-	s1 = av[1];
-	s2 = av[2];
-	len1 = str_len(s1);
-	len2 = str_len(s2);
-	result = malloc(sizeof(int) * (len1 + len2 + 1));
-	for (i = 0; i < len1 + len2 + 1; i++)
-		result[i] = 0;
-	compute_mult(len1, len2, s1, s2, result);
 	for (i = 0; i < len1 + len2; i++)
 	{
-		if (result[i])
-			checker = 1;
-		if (checker)
-			putchar(result[i] + 48);
+		if (res[i])
+			not_zero = 1;
+		if (not_zero)
+			printf("%d", res[i]);
 	}
-	if (checker == 0)
-		putchar('0');
-	putchar('\n');
-	free(result);
+	printf("\n");
+}
+
+/**
+ * main - entry point
+ * Desc: calculates the multiplication of two numbers stored in two strings
+ * @ac: integer
+ * @av: array of strings
+ *
+ * Return: 0 on success, otherwisw 98
+ */
+int main(int ac, char **av)
+{
+	int *num1, *num2, *res, len1, len2, dig;
+	int n, i, j, k, l1, l2;
+
+	i = j =  0;
+	k = 1;
+
+	if (ac != 3)
+		exit_error();
+
+	len1 = length(av[1]);
+	len2 = length(av[2]);
+	dig = is_digit(av[1], len1 - 1) + is_digit(av[2], len2 - 1);
+	if (dig != 2)
+		exit_error();
+	num1 = _atoi(av[1], len1);
+	num2 = _atoi(av[2], len2);
+	res = malloc(sizeof(*res) * (len1 + len2));
+	if (!res)
+		exit_error();
+	for (; res[i]; i++)
+		res[i] = 0;
+
+	for (l1 = len1; l1 > 0; l1--)
+	{
+		i = len1 + len2 - k;
+		for (l2 = len2; l2 > 0; l2--, i--)
+		{
+			n = num1[l1 - 1] * num2[l2 - 1];
+			res[i] += n % 10;
+			res[i - 1] += n / 10 + res[i] / 10;
+			res[i] = res[i] % 10;
+		}
+		k++;
+	}
+	print_result(res, len1, len2);
+	free(res);
 	return (0);
 }
