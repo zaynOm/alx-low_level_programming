@@ -82,6 +82,8 @@ void print_result(int *res, int len1, int len2)
 			not_zero = 1;
 		if (not_zero)
 			printf("%d", res[i]);
+		else if (i == len1 + len2 - 1)
+			printf("0");
 	}
 	printf("\n");
 }
