@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "main.h"
 /**
  * exit_error - prints Error then it exits with 98 code
  */
@@ -79,11 +80,11 @@ void print_result(int *res, int len1, int len2)
 		if (res[i])
 			not_zero = 1;
 		if (not_zero)
-			printf("%d", res[i]);
+			_putchar(res[i] + 48);
 		else if (i == len1 + len2 - 1)
-			printf("0");
+			_putchar('0');
 	}
-	printf("\n");
+	_putchar('\n');
 }
 
 /**
