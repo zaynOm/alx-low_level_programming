@@ -18,7 +18,6 @@ int main(int ac, char *av[])
 
 
 	op_fun = get_op_func(av[2]);
-
 	if (!op_fun)
 	{
 		printf("Error\n");
