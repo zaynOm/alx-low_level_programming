@@ -44,12 +44,10 @@ int op_mul(int a, int b)
  */
 int op_div(int a, int b)
 {
-	if (!b)
-	{
-		printf("Error\n");
-		exit(100);
-	}
-	return (a / b);
+	if (b)
+		return (a / b);
+	printf("Error\n");
+	exit(100);
 }
 
 /**
@@ -62,9 +60,7 @@ int op_div(int a, int b)
 int op_mod(int a, int b)
 {
 	if (!b)
-	{
-		printf("Error\n");
-		exit(100);
-	}
-	return (a % b);
+		return (a % b);
+	printf("Error\n");
+	exit(100);
 }
