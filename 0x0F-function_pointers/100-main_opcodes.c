@@ -26,8 +26,8 @@ int main(int ac, char *av[])
 	}
 	func_ptr = (char *)main;
 	for (i = 0; i < nbts - 1; i++)
-		printf("%2hhx ", func_ptr[i]);
+		printf("%02hhx ", func_ptr[i]);
 
-	printf("%2hhx\n", func_ptr[i]);
+	printf("%02hhx\n", func_ptr[i]);
 	return (0);
 }
