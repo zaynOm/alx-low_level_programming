@@ -16,18 +16,11 @@ int main(int ac, char *av[])
 		exit(98);
 	}
 
-
 	op_fun = get_op_func(av[2]);
 	if (!op_fun)
 	{
 		printf("Error\n");
 		exit(99);
-	}
-
-	if ((av[2] == '/' || av[2] == '%') && av[3] == 0)
-	{
-		printf("Error\n");
-		exit(100);
 	}
 
 	printf("%d\n", op_fun(atoi(av[1]), atoi(av[3])));
