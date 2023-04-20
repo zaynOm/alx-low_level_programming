@@ -24,6 +24,12 @@ int main(int ac, char *av[])
 		exit(99);
 	}
 
+	if ((av[2] == '/' || av[2] == '%') && av[3] == 0)
+	{
+		printf("Error\n");
+		exit(100);
+	}
+
 	printf("%d\n", op_fun(atoi(av[1]), atoi(av[3])));
 	return (0);
 }
