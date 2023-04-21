@@ -1,2 +1,5 @@
 main.c
 *.out
+_putchar.c
+test.sh
+mul.c
