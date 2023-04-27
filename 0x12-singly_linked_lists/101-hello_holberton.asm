@@ -2,11 +2,11 @@ section .data
 	msg: db "Hello, Holberton", 10
 
 section .text
-	global _start
+	global main
 
 	extern printf
 	
-	_start:
+	main:
 		push msg
 		call printf
 		add esp, 4
