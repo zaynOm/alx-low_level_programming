@@ -8,8 +8,6 @@
  */
 size_t print_list(const list_t *h)
 {
-	int nd;
-
 	if (!h)
 		return (0);
 
@@ -18,7 +16,5 @@ size_t print_list(const list_t *h)
 	else
 		printf("[0] (nil)\n");
 
-	nd = print_list(h->next);
-
-	return (nd + 1);
+	return (print_list(h->next) + 1);
 }
