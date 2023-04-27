@@ -1,19 +1,6 @@
 #include "lists.h"
 
 /**
- * _strlen - counts the length of a string
- * @str: string
- *
- * Return: length of @str
- */
-int _strlen(char *str)
-{
-	if (!*str)
-		return (0);
-	return (_strlen(str + 1) + 1);
-}
-
-/**
  * add_helper - adds a node at the end of a linked list using recursion
  * @head: double pointer to the first node
  * @new: node to add at the end
