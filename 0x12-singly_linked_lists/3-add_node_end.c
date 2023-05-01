@@ -13,7 +13,7 @@ list_t *add_helper(list_t **head, list_t *new, char *str)
 	if (!*head)
 	{
 		new->str = strdup(str);
-		new->len = _strlen(str);
+		new->len = strlen(str);
 		new->next = NULL;
 		*head = new;
 		return (*head);
