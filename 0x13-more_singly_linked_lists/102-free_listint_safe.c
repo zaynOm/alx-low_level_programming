@@ -8,16 +8,23 @@
  */
 size_t free_listint_safe(listint_t **h)
 {
-	listint_t *temp;
+	listint_t *temp = *h;
+	size_t count = 1;
 
-	if (!*h || *h >= (*h)->next)
+	if (!h || !(*h))
+		return (0);
+
+	if (*h <= (*h)->next)
 	{
-		free(*h);
 		*h = NULL;
-		return (1);
+		free(temp);
 	}
-	temp = (*h)->next;
-	free(*h);
+	else
+	{
+		*h = (*h)->next;
+		free(temp);
+		count += free_listint_safe(h);
+	}
 
-	return (1 + free_listint_safe(&temp));
+	return (count);
 }
