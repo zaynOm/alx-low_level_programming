@@ -8,36 +8,26 @@
  */
 size_t print_listint_safe(const listint_t *head)
 {
-	const listint_t *tortoise = head, *hare = head;
+	const listint_t *prev, *node = head;
 	size_t count = 0;
 
-	while (hare && hare->next)
+	if (!head)
+		exit(98);
+
+	while (node)
 	{
-		printf("[%p] %d\n", (void *)tortoise, tortoise->n);
+		printf("[%p] %d\n", (void *)node, node->n);
 		count++;
+		prev = node;
+		node = node->next;
 
-		tortoise = tortoise->next;
-		hare = hare->next->next;
-
-		if (tortoise == hare)
+		if (node > prev)
 		{
-			printf("[%p] %d\n", (void *)tortoise, tortoise->n);
-			printf("-> [%p] %d\n", (void *)hare->next, hare->next->n);
-			count += 2;
+			printf("-> [%p] %d\n", (void *)node, node->n);
+			count++;
 			break;
 		}
-	}
 
-	if (!hare || !hare->next)
-	{
-		while (tortoise)
-		{
-			printf("[%p] %d\n", (void *)tortoise, tortoise->n);
-			count++;
-			tortoise = tortoise->next;
-		}
 	}
-
 	return (count);
 }
-
