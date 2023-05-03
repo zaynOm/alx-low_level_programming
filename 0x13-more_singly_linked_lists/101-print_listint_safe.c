@@ -8,12 +8,12 @@
  */
 size_t print_listint_safe(const listint_t *head)
 {
-	const listint_t *prev, *node = head;
+	const listint_t *prev, *node;
 	size_t count = 0;
 
 	if (!head)
 		exit(98);
-
+	node = head;
 	while (node)
 	{
 		printf("[%p] %d\n", (void *)node, node->n);
