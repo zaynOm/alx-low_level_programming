@@ -43,7 +43,7 @@ size_t print_listint_safe(const listint_t *head)
 	int isloop = 1;
 
 	if (!head)
-		exit(98);
+		return (0);
 
 	loop = find_listint_loop((listint_t *)head);
 	for (isloop = 1; (head != loop || isloop) && head;)
