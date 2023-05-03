@@ -10,11 +10,11 @@ size_t free_listint_safe(listint_t **h)
 {
 	listint_t *temp;
 
-	if (*h > (*h)->next)
+	if (!*h || *h >= (*h)->next)
 	{
 		free(*h);
 		*h = NULL;
-		return (0);
+		return (1);
 	}
 	temp = (*h)->next;
 	free(*h);
