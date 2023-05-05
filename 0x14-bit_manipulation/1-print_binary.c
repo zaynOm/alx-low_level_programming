@@ -13,7 +13,7 @@ void print_binary(unsigned long int n)
 
 	if (n == 0)
 	{
-		printf("0");
+		_putchar('0');
 		return;
 	}
 	temp = n;
@@ -25,9 +25,9 @@ void print_binary(unsigned long int n)
 	while (shifts >= 0)
 	{
 		if ((n >> shifts) & 1)
-			printf("1");
+			_putchar('1');
 		else
-			printf("0");
+			_putchar('0');
 		shifts--;
 	}
 }
