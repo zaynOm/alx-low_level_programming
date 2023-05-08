@@ -6,7 +6,7 @@
  *
  * Return: the number of letters it could read and print, 0 if an error occurs
  */
-size_t read_textfile(const char *filename, size_t letters)
+ssize_t read_textfile(const char *filename, size_t letters)
 {
 	char *buff;
 	int fop, fre, fwr;
