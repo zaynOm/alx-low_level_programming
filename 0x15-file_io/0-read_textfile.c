@@ -17,7 +17,7 @@ ssize_t read_textfile(const char *filename, size_t letters)
 
 	fop = open(filename, O_RDONLY);
 	fre = read(fop, buff, letters);
-	fwr = write(1, buff, fre);
+	fwr = write(STDOUT_FILENO, buff, fre);
 
 	if (fop * fre * fwr < 0 || fre != fwr)
 	{
