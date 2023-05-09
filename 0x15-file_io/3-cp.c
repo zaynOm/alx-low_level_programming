@@ -1,75 +1,114 @@
-#include "main.h"
+#define _GNU_SOURCE
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
 /**
- * err - pritns error msg & exit with the corresponding error code
- * @file: file name causing the error
- * @err: error number
-*/
-void err(char *file, int err)
+ * close_errchk - closes a file descriptor and prints
+ * an error message if it fails
+ *
+ * @fd: file descriptor to close
+ *
+ * Return: 0 on success, -1 on failure
+ */
+int close_errchk(int fd)
 {
-	if (err == 98)
+	int err;
+
+	err = close(fd);
+	if (err == -1)
 	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file);
-		exit(98);
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
+		return (100);
 	}
-	if (err == 99)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
-		exit(99);
-	}
-	else
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", err);
-		exit(100);
-	}
+	return (0);
 }
 
 /**
- * close_fd - close a file descriptor,
- * if it can close it exit with code 100 and print an error msg
- * @fd: file descriptor to close
+ * write_err - error handler for a write error
+ *
+ * @fd1: first descriptor to close
+ * @fd2: second descriptor to close
+ * @filename: filename prompting the error
+ *
+ * Return: 99
  */
-void close_fd(int fd)
+int write_err(int fd1, int fd2, char *filename)
 {
-	if (close(fd) == -1)
-		err("", fd);
+	dprintf(STDERR_FILENO, "Error: Can't write to %s\n", filename);
+	close_errchk(fd1);
+	close_errchk(fd2);
+	return (99);
 }
+
 /**
- * main - copies the content of a file to another file.
- * @ac: number of arguments
- * @av: array of arguments
+ * read_err - error handler for a read error
  *
- * Return: 0 on success,
- * or the corresponding error code (97, 98, 99, or 100) on failure.
+ * @fd1: first descriptor to close
+ * @fd2: second descriptor to close
+ * @filename: filename prompting the error
  *
+ * Return: 98
+ */
+int read_err(int fd1, int fd2, char *filename)
+{
+	dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", filename);
+	close_errchk(fd1);
+	close_errchk(fd2);
+	return (98);
+}
+
+/**
+ * main - copy one file to another, new file with perms 664
+ * usage - cp file_from file_to
+ *
+ * @ac: number of arg
+ * @av: list of args
+ *
+ * Return: 97 if incorrect num of args
+ * 98 if file_from does not exist or unreadable
+ * 99 if write fails
+ * 100 if file close fails
+ * 0 otherwise
  */
 int main(int ac, char *av[])
 {
-	int file_from, file_to, re, wr;
-	char buff[1024];
-	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+	char buf[1024];
+	int lenr, lenw, file_from, file_to, err;
 
 	if (ac != 3)
 	{
-		dprintf(STDOUT_FILENO, "Usage: cp file_from file_to\n");
-		exit(97);
+		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
+		return (97);
 	}
 	file_from = open(av[1], O_RDONLY);
 	if (file_from == -1)
-		err(av[1], 98);
-	file_to = open(av[2], O_CREAT | O_WRONLY | O_TRUNC, mode);
+	{
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n",
+				av[1]);
+		return (98);
+	}
+	file_to = open(av[2], O_WRONLY | O_CREAT | O_TRUNC,
+			S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
 	if (file_to == -1)
-		err(av[2], 99);
+	{
+		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", av[2]);
+		close_errchk(file_from);
+		return (99);
+	}
 	do {
-		re = read(file_from, buff, 1024);
-		if (re == -1)
-			err(av[1], 98);
-		wr = write(file_to, buff, re);
-		if (wr == -1 || wr != re)
-			err(av[2], 99);
-	} while (re > 0);
-
-	close_fd(file_from);
-	close_fd(file_to);
-
+		lenr = read(file_from, buf, 1024);
+		if (lenr == -1)
+			return (read_err(file_from, file_to, av[1]));
+		lenw = write(file_to, buf, lenr);
+		if (lenw == -1 || lenw != lenr)
+			return (write_err(file_from, file_to, av[2]));
+	} while (lenr == 1024);
+	err = close_errchk(file_from);
+	err += close_errchk(file_to);
+	if (err != 0)
+		return (100);
 	return (0);
 }
