@@ -44,7 +44,7 @@ void close_fd(int fd)
  */
 int main(int ac, char *av[])
 {
-	int file_from, file_to, re;
+	int file_from, file_to, re, wr;
 	char buff[1024];
 
 	if (ac != 3)
@@ -66,7 +66,6 @@ int main(int ac, char *av[])
 		if (wr == -1 || wr != re)
 			err(av[2], 99);
 	} while (re == 1024);
-	free(buff);
 	close_fd(file_from);
 	close_fd(file_to);
 
