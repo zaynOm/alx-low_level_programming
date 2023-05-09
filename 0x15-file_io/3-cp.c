@@ -66,7 +66,8 @@ int main(int ac, char *av[])
 		wr = write(file_to, buff, re);
 		if (wr == -1 || wr != re)
 			err(av[2], 99);
-	} while (re == 1024);
+	} while (re > 0);
+
 	close_fd(file_from);
 	close_fd(file_to);
 
