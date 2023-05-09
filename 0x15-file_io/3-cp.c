@@ -62,10 +62,11 @@ int main(int ac, char *av[])
 		re = read(file_from, buff, 1024);
 		if (re == -1)
 			err(av[1], 98);
-		if (write(file_to, buff, re) == -1)
+		wr = write(file_to, buff, re);
+		if (wr == -1 || wr != re)
 			err(av[2], 99);
 	} while (re == 1024);
-
+	free(buff);
 	close_fd(file_from);
 	close_fd(file_to);
 
