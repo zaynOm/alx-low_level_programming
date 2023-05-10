@@ -47,7 +47,8 @@ void print_class(char *hdr)
 {
 	printf("  %-35s", "Class:");
 	printf("%s", hdr[4] == 2 ? "ELF64" : hdr[4] == 1 ? "ELF32" : "");
-	printf("<unknown: %02hx>", hdr[4]);
+	if (hdr[4] > 2)
+		printf("<unknown: %02hx>", hdr[4]);
 	printf("\n");
 }
 
@@ -61,9 +62,9 @@ void print_data(char *hdr)
 		: NULL;
 	printf("  %-35s", "Data:");
 	if (data)
-		printf("2's complement, %s", data);
+		printf("2's complement, %s\n", data);
 	else
-		printf("<unknown: %02hx>", hdr[5]);
+		printf("<unknown: %02hx>\n", hdr[5]);
 }
 
 /**
@@ -106,7 +107,7 @@ void print_type(char *hdr)
 
 	printf("  %-35s", "Type:");
 	if (hdr[i] > 0 && hdr[i] < 5)
-		printf("%s file\n", type[(int)hdr[i]]);
+		printf("%s file)\n", type[(int)hdr[i]]);
 	else
 		printf("<unknown>: %x\n", hdr[i]);
 }
