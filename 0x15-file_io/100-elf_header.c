@@ -6,6 +6,17 @@
  */
 void err(char *file, int err)
 {
+	if (err == 1)
+	{
+		dprintf(STDERR_FILENO, "readelf: Error: \'%s\': No such file\n", file);
+		exit(1);
+	}
+	if (err == 127)
+	{
+		dprintf(STDERR_FILENO, "Error: not an ELF file\n");
+		exit(98);
+	}
+
 	if (err == 98)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file);
@@ -15,11 +26,6 @@ void err(char *file, int err)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
 		exit(99);
-	}
-	if (err == 127)
-	{
-		dprintf(STDERR_FILENO, "Error: not an ELF file\n");
-		exit(98);
 	}
 	else
 	{
@@ -137,21 +143,19 @@ void print_entry(char *hdr)
  */
 int main(int ac, char *av[])
 {
-	char *hdr;
+	char hdr[32];
 	int op, re, i;
 
 	if (ac != 2)
 		exit(97);
 
 	op = open(av[1], O_RDONLY);
-	hdr = malloc(sizeof(Elf64_Ehdr));
-	re = read(op, hdr, sizeof(Elf64_Ehdr));
-	if (op == -1 || !hdr || re == -1)
-	{
-		close_fd(op);
-		free(hdr);
+	if (op == -1)
+		err(av[1], 1);
+
+	re = read(op, hdr, 32);
+	if (re == -1)
 		err(av[1], 98);
-	}
 
 	if (hdr[0] != 127 || hdr[1] != 'E' || hdr[2] != 'L' || hdr[3] != 'F')
 		err("", 127);
