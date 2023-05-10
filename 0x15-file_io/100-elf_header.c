@@ -90,7 +90,7 @@ void print_osabi(char *hdr)
 
 	printf("  %-35s", "OS/ABI:");
 	if (hdr[7] >= 0 && hdr[7] <= 17)
-		printf("UNIX - %s\n", os[(int)hdr[7]]);
+		printf("UNIX - %s\n", os[(int)hdr[7] + 1]);
 	else
 		printf("<unknown: %02x>\n", hdr[7]);
 }
@@ -107,7 +107,7 @@ void print_type(char *hdr)
 
 	printf("  %-35s", "Type:");
 	if (hdr[i] > 0 && hdr[i] < 5)
-		printf("%s file)\n", type[(int)hdr[i]]);
+		printf("%s file)\n", type[(int)hdr[i] - 1]);
 	else
 		printf("<unknown>: %x\n", hdr[i]);
 }
