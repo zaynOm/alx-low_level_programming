@@ -1,176 +1,227 @@
-#include "main.h"
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <elf.h>
 /**
- * err - pritns error msg & exit with the corresponding error code
- * @file: file name causing the error
- * @err: error number
+ * printclass - prints the class from an elf header
+ *
+ * @head: header information
+ *
+ * Return: void
  */
-void err(char *file, int err)
-{
-	if (err == 1)
-	{
-		dprintf(STDERR_FILENO, "readelf: Error: \'%s\': No such file\n", file);
-		exit(1);
-	}
-	if (err == 127)
-	{
-		dprintf(STDERR_FILENO, "Error: not an ELF file\n");
-		exit(98);
-	}
-
-	if (err == 98)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file);
-		exit(98);
-	}
-	if (err == 99)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
-		exit(99);
-	}
-	else
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", err);
-		exit(100);
-	}
-}
-
-/**
- * close_fd - close a file descriptor,
- * if it can close it exit with code 100 and print an error msg
- * @fd: file descriptor to close
- */
-void close_fd(int fd)
-{
-	if (close(fd) == -1)
-		err("", fd);
-}
-
-/**
- * print_class - prints the class of the ELF header file.
- * @hdr: ELF header
- */
-void print_class(char *hdr)
+void printclass(char *head)
 {
 	printf("  %-35s", "Class:");
-	printf("%s", hdr[4] == 2 ? "ELF64" : hdr[4] == 1 ? "ELF32" : "");
-	if (hdr[4] > 2)
-		printf("<unknown: %02hx>", hdr[4]);
-	printf("\n");
-}
-
-/**
- * print_data - prints the data of the ELF header file.
- * @hdr: ELF header
- */
-void print_data(char *hdr)
-{
-	char *data = hdr[5] == 1 ? "little endian" : hdr[5] == 2 ? "big endian"
-		: NULL;
-	printf("  %-35s", "Data:");
-	if (data)
-		printf("2's complement, %s\n", data);
+	if (head[4] == 2)
+		printf("ELF64\n");
+	else if (head[4] == 1)
+		printf("ELF32\n");
 	else
-		printf("<unknown: %02hx>\n", hdr[5]);
+		printf("<unknown: %02hx>", head[4]);
 }
 
 /**
- * print_vrs - prints the version of the ELF header file.
- * @hdr: ELF header
- */
-void print_vrs(char *hdr)
-{
-	printf("  %-35s%d", "Version:", hdr[6]);
-	printf("%s", hdr[6] == EV_CURRENT ? " (current)\n" : "\n");
-}
-
-/**
- * print_osabi - prints the OS/ABI of the ELF header file.
- * @hdr: ELF header
- */
-void print_osabi(char *hdr)
-{
-	char *os[18] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU Hurd", "",
-		"Solaris", "AIX", "IRIX", "FreeBSD", "Tru64", "Novell Modesto",
-		"OpenBSD", "Open VMS", "NonStop Kernel", "AROS", "Fenix OS",
-		"CloudABI"};
-
-	printf("  %-35s", "OS/ABI:");
-	if (hdr[7] >= 0 && hdr[7] <= 17)
-		printf("UNIX - %s\n", os[(int)hdr[7]]);
-	else
-		printf("<unknown: %02x>\n", hdr[7]);
-}
-
-/**
- * print_type - prints the filetype of the ELF header file.
- * @hdr: ELF header
- */
-void print_type(char *hdr)
-{
-	int i = hdr[5] == 1 ? 16 : 17;
-	char *type[4] = {"REL (Relocatable", "EXEC (Executable",
-		"DYN (Shared object", "CORE (Core"};
-
-	printf("  %-35s", "Type:");
-	if (hdr[i] > 0 && hdr[i] < 5)
-		printf("%s file)\n", type[(int)hdr[i] - 1]);
-	else
-		printf("<unknown>: %x\n", hdr[i]);
-}
-
-/**
- * print_entry - prints the entry point of the ELF header file.
- * @hdr: ELF header
- */
-void print_entry(char *hdr)
-{
-	uint64_t addr;
-
-	if (hdr[EI_CLASS] == ELFCLASS64)
-		addr = (uintptr_t)(*(uint64_t *)(hdr + 0x18));
-
-	else
-		addr = (uintptr_t)(*(uint32_t *)(hdr + 0x18));
-	printf("  %-35s0x%lx\n", "Entry point address:", addr);
-}
-/**
- * main - prints the information contained in the ELF header of a given file
- * @ac: number of arguments
- * @av: array of arguments
+ * printdata - prints the information about data organization
+ * from the elf header
  *
- * Return: 0 on success,
- * or the corresponding error code (97, 98, 99, or 100) on failure.
+ * @head: header information
+ *
+ * Return: void
+ */
+void printdata(char *head)
+{
+	printf("  %-35s", "Data:");
+	if (head[5] == 1)
+		printf("2's complement, little endian\n");
+	else if (head[5] == 2)
+		printf("2's complement, big endian\n");
+	else
+		printf("<unknown: %02hx>", head[5]);
+}
+
+/**
+ * printversion - prints version info from elf header
+ *
+ * @head: header information
+ *
+ * Return: void
+ */
+void printversion(char *head)
+{
+	printf("  %-35s", "Version:");
+	if (head[6] <= EV_CURRENT)
+	{
+		printf("%d", head[6]);
+		if (head[6] == EV_CURRENT)
+			printf(" (current)\n");
+		else
+			printf("\n");
+	}
+	else
+	{
+		printf("49 <unknown %%lx>");
+	}
+}
+
+/**
+ * printabi - prints abi version from header information
+ *
+ * @head: header information
+ *
+ * Return: void
+ */
+void printabi(char *head)
+{
+	printf("  %-35s", "OS/ABI:");
+	if (head[7] == 0)
+		printf("UNIX - System V\n");
+	else if (head[7] == 1)
+		printf("UNIX - HP-UX\n");
+	else if (head[7] == 2)
+		printf("UNIX - NetBSD\n");
+	else if (head[7] == 3)
+		printf("UNIX - Linux\n");
+	else if (head[7] == 4)
+		printf("UNIX - GNU Hurd\n");
+	else if (head[7] == 6)
+		printf("UNIX - Solaris\n");
+	else if (head[7] == 7)
+		printf("UNIX - AIX\n");
+	else if (head[7] == 8)
+		printf("UNIX - IRIX\n");
+	else if (head[7] == 9)
+		printf("UNIX - FreeBSD\n");
+	else if (head[7] == 10)
+		printf("UNIX - Tru64\n");
+	else if (head[7] == 11)
+		printf("UNIX - Novell Modesto\n");
+	else if (head[7] == 12)
+		printf("UNIX - OpenBSD\n");
+	else if (head[7] == 13)
+		printf("UNIX - Open VMS\n");
+	else if (head[7] == 14)
+		printf("UNIX - NonStop Kernel\n");
+	else if (head[7] == 15)
+		printf("UNIX - AROS\n");
+	else if (head[7] == 16)
+		printf("UNIX - Fenix OS\n");
+	else if (head[7] == 17)
+		printf("UNIX - CloudABI\n");
+	else
+		printf("<unknown: %02x>\n", head[7]);
+	printf("  %-35s%d\n", "ABI Version:", head[8]);
+}
+
+/**
+ * printtype - prints elf filetype from header info
+ *
+ * @head: header information
+ *
+ * Return: void
+ */
+void printtype(char *head)
+{
+	int index;
+
+	if (head[5] == 1)
+		index = 16;
+	else
+		index = 17;
+	printf("  %-35s", "Type:");
+	if (head[index] == 1)
+		printf("REL (Relocatable file)\n");
+	else if (head[index] == 2)
+		printf("EXEC (Executable file)\n");
+	else if (head[index] == 3)
+		printf("DYN (Shared object file)\n");
+	else if (head[index] == 4)
+		printf("CORE (Core file)\n");
+	else
+		printf("<unknown>: %02x%02x\n", head[16], head[17]);
+}
+
+/**
+ * printentry - prints entry address of executable from header
+ *
+ * @head: header information
+ *
+ * Return: void
+ */
+void printentry(char *head)
+{
+	int i, end;
+
+	printf("  %-35s0x", "Entry point address:");
+	if (head[4] == 2)
+		end = 0x1f;
+	else
+		end = 0x1b;
+	if (head[5] == 1)
+	{
+		i = end;
+		while (head[i] == 0 && i > 0x18)
+			i--;
+		printf("%x", head[i--]);
+		while (i >= 0x18)
+			printf("%02x", (unsigned char) head[i--]);
+		printf("\n");
+	}
+	else
+	{
+		i = 0x18;
+		while (head[i] == 0)
+			i++;
+		printf("%x", head[i++]);
+		while (i <= end)
+			printf("%02x", (unsigned char) head[i++]);
+		printf("\n");
+	}
+}
+
+/**
+ * main - parses an elf header file
+ *
+ * @ac: number of args
+ * @av: arugment strings
+ *
+ * Return: 0 on success
+ * 1 on incorrect arg number
+ * 2 on file open failure
+ * 3 on read failure
+ * 4 on failure to read enough bytes for a 32 bit file
+ * 98 if elf magic is not matched
  */
 int main(int ac, char *av[])
 {
-	char hdr[32];
-	int op, re, i;
+	int ifile, i;
+	char head[32];
 
 	if (ac != 2)
-		exit(97);
-
-	op = open(av[1], O_RDONLY);
-	if (op == -1)
-		err(av[1], 1);
-
-	re = read(op, hdr, 32);
-	if (re == -1)
-		err(av[1], 98);
-
-	if (hdr[0] != 127 || hdr[1] != 'E' || hdr[2] != 'L' || hdr[3] != 'F')
-		err("", 127);
-
+		return (1);
+	ifile = open(av[1], O_RDONLY);
+	if (ifile == -1)
+		return (1);
+	i = read(ifile, head, 32);
+	if (i == -1)
+		return (1);
+	if (i < 28)
+		return (1);
+	if (head[0] != 0x7f || head[1] != 'E' || head[2] != 'L' || head[3] != 'F')
+	{
+		dprintf(STDERR_FILENO,
+			"readelf: Error: hellofile: Failed to read file header\n");
+		return (98);
+	}
 	printf("ELF Header:\n  Magic:   ");
 	for (i = 0; i < 16; i++)
-		printf("%02x ", (unsigned int) hdr[i]);
+		printf("%02x ", (unsigned int) head[i]);
 	printf("\n");
-	print_class(hdr);
-	print_data(hdr);
-	print_vrs(hdr);
-	print_osabi(hdr);
-	printf("  %-35s%d\n", "ABI Version:", hdr[8]);
-	print_type(hdr);
-	print_entry(hdr);
-
+	printclass(head);
+	printdata(head);
+	printversion(head);
+	printabi(head);
+	printtype(head);
+	printentry(head);
 	return (0);
 }
