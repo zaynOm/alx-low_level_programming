@@ -96,7 +96,7 @@ void print_osabi(char *hdr)
 
 	printf("  %-35s", "OS/ABI:");
 	if (hdr[7] >= 0 && hdr[7] <= 17)
-		printf("UNIX - %s\n", os[(int)hdr[7] + 1]);
+		printf("UNIX - %s\n", os[(int)hdr[7]]);
 	else
 		printf("<unknown: %02x>\n", hdr[7]);
 }
