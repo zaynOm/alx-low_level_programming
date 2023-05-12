@@ -90,6 +90,10 @@ void print_osabi(unsigned char *e)
 	printf("  %-35s", "OS/ABI:");
 	if (e[EI_OSABI] <= 17)
 		printf("UNIX - %s\n", os[(int)e[EI_OSABI]]);
+	else if (e[EI_OSABI] == ELFOSABI_ARM)
+		printf("UNIX - ARM\n");
+	else if (e[EI_OSABI] == ELFOSABI_STANDALONE)
+		printf("UNIX - Standalone App\n");
 	else
 		printf("<unknown: %x>\n", e[EI_OSABI]);
 }
