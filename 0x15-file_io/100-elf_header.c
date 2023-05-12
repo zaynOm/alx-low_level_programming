@@ -136,28 +136,25 @@ void print_type(unsigned char *e)
 }
 
 /**
- * print_entry - Prints the entry point of an ELF header.
- *
- * @e_entry: The address of the ELF entry point.
- * @e_ident: A pointer to an array containing the ELF class.
+ * print_entry - prints the entry point of the ELF header file.
+ * @ee: address of the entry point.
+ * @ei: ELF header
  */
-void print_entry(unsigned long int e_entry, unsigned char *e_ident)
+void print_entry(unsigned long ee, unsigned char *ei)
 {
-	printf("  Entry point address:               ");
+	printf("  %-35s", "Entry point address:");
 
-	if (e_ident[EI_DATA] == ELFDATA2MSB)
+	if (ei[EI_DATA] == ELFDATA2MSB)
 	{
-		e_entry = ((e_entry << 8) & 0xFF00FF00) |
-			  ((e_entry >> 8) & 0xFF00FF);
-		e_entry = (e_entry << 16) | (e_entry >> 16);
+		ee = ((ee << 8) & 0xFF00FF00) | ((ee >> 8) & 0xFF00FF);
+		ee = (ee << 16) | (ee >> 16);
 	}
-
-	if (e_ident[EI_CLASS] == ELFCLASS32)
-		printf("%#x\n", (unsigned int)e_entry);
-
+	if (ei[EI_CLASS] == ELFCLASS32)
+		printf("%#x\n", (unsigned int)ee);
 	else
-		printf("%#lx\n", e_entry);
+		printf("%#lx\n", ee);
 }
+
 /**
  * main - prints the information contained in the ELF header of a given file
  * @ac: number of arguments
