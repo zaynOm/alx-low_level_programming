@@ -9,28 +9,22 @@ void err(char *file, int err)
 	if (err == 1)
 	{
 		dprintf(STDERR_FILENO, "readelf: Error: \'%s\': No such file\n", file);
-		exit(1);
+		exit(98);
+	}
+	if (err == 98)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file);
+		exit(98);
 	}
 	if (err == 127)
 	{
 		dprintf(STDERR_FILENO, "Error: not an ELF file\n");
 		exit(98);
 	}
-
-	if (err == 98)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file);
-		exit(98);
-	}
-	if (err == 99)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
-		exit(99);
-	}
 	else
 	{
 		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", err);
-		exit(100);
+		exit(98);
 	}
 }
 
@@ -147,7 +141,7 @@ int main(int __attribute__((unused)) ac, char *av[])
 
 	op = open(av[1], O_RDONLY);
 	if (op == -1)
-		err(av[1], 1);
+		err(av[1], 98);
 
 	hdr = malloc(sizeof(Elf64_Ehdr));
 	if (!hdr)
@@ -165,8 +159,10 @@ int main(int __attribute__((unused)) ac, char *av[])
 		err("", 127);
 
 	printf("ELF Header:\n  Magic:   ");
-	for (i = 0; i < 16; i++)
+	for (i = 0; i < 15; i++)
 		printf("%02x ", hdr->e_ident[i]);
+	printf("%02x", hdr->e_ident[i]);
+
 	printf("\n");
 	print_class(hdr->e_ident);
 	print_data(hdr->e_ident);
@@ -176,5 +172,7 @@ int main(int __attribute__((unused)) ac, char *av[])
 	print_type(hdr->e_ident);
 	print_entry(hdr->e_ident);
 
+	free(hdr);
+	close_fd(op);
 	return (0);
 }
