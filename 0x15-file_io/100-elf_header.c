@@ -6,26 +6,13 @@
  */
 void err(char *file, int err)
 {
-	if (err == 1)
-	{
-		dprintf(STDERR_FILENO, "readelf: Error: \'%s\': No such file\n", file);
-		exit(98);
-	}
 	if (err == 98)
-	{
 		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file);
-		exit(98);
-	}
 	if (err == 127)
-	{
 		dprintf(STDERR_FILENO, "Error: not an ELF file\n");
-		exit(98);
-	}
 	else
-	{
 		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", err);
-		exit(98);
-	}
+	exit(98);
 }
 
 /**
@@ -73,7 +60,6 @@ void print_class(unsigned char *e)
  */
 void print_data(unsigned char *e)
 {
-
 	printf("  %-35s", "Data:");
 	if (e[EI_DATA] > 2)
 		printf("<unknown: %x>\n", e[EI_DATA]);
@@ -101,9 +87,9 @@ void print_vrs(unsigned char *e)
 void print_osabi(unsigned char *e)
 {
 	char *os[18] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU", "",
-					"Solaris", "AIX", "IRIX", "FreeBSD", "Tru64", "Novell Modesto",
-					"OpenBSD", "Open VMS", "NonStop Kernel", "AROS", "Fenix OS",
-					"CloudABI"};
+					"Solaris", "AIX", "IRIX", "FreeBSD", "Tru64",
+					"Novell Modesto", "OpenBSD", "Open VMS", "NonStop Kernel",
+					"AROS", "Fenix OS", "CloudABI"};
 
 	printf("  %-35s", "OS/ABI:");
 	if (e[EI_OSABI] == ELFOSABI_ARM)
@@ -161,7 +147,7 @@ void print_entry(unsigned long ee, unsigned char *ei)
  * @av: array of arguments
  *
  * Return: 0 on success,
- * or the corresponding error code (97, 98, 99, or 100) on failure.
+ * or 98 on failure.
  */
 int main(int __attribute__((unused)) ac, char *av[])
 {
