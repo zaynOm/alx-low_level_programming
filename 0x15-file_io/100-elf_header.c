@@ -48,7 +48,7 @@ void print_magic(unsigned char *e)
 	int i;
 
 	printf("  Magic:   ");
-	for (i = 0; i < 15; i++)
+	for (i = 0; i < EI_NIDENT - 1; i++)
 		printf("%02x ", e[i]);
 	printf("%02x\n", e[i]);
 }
