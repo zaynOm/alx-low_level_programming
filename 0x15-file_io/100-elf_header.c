@@ -49,7 +49,7 @@ void close_fd(int fd)
  * print_class - prints the class of the ELF header file.
  * @e: ELF header
  */
-void print_class(char *e)
+void print_class(unsigned char *e)
 {
 	printf("  %-35s", "Class:");
 	printf("%s\n", e[EI_CLASS] == 2 ? "ELF64" : e[EI_CLASS] == 1 ? "ELF32" : "");
@@ -61,7 +61,7 @@ void print_class(char *e)
  * print_data - prints the data of the ELF header file.
  * @e: ELF header
  */
-void print_data(char *e)
+void print_data(unsigned char *e)
 {
 	char *data = e[5] == 1 ? "little endian" : e[5] == 2 ? "big endian"
 		: NULL;
@@ -76,7 +76,7 @@ void print_data(char *e)
  * print_vrs - prints the version of the ELF header file.
  * @e: ELF header
  */
-void print_vrs(char *e)
+void print_vrs(unsigned char *e)
 {
 	printf("  %-35s%d", "Version:", e[EI_VERSION]);
 	printf("%s", e[EI_VERSION] == EV_CURRENT ? " (current)\n" : "\n");
@@ -86,7 +86,7 @@ void print_vrs(char *e)
  * print_osabi - prints the OS/ABI of the ELF header file.
  * @e: ELF header
  */
-void print_osabi(char *e)
+void print_osabi(unsigned char *e)
 {
 	char *os[18] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU", "",
 		"Solaris", "AIX", "IRIX", "FreeBSD", "Tru64", "Novell Modesto",
@@ -94,7 +94,7 @@ void print_osabi(char *e)
 		"CloudABI"};
 
 	printf("  %-35s", "OS/ABI:");
-	if (e[EI_OSABI] >= 0 && e[EI_OSABI] <= 17)
+	if (e[EI_OSABI] <= 17)
 		printf("UNIX - %s\n", os[(int)e[EI_OSABI]]);
 	else
 		printf("<unknown: %x>\n", e[EI_OSABI]);
@@ -104,7 +104,7 @@ void print_osabi(char *e)
  * print_type - prints the filetype of the ELF header file.
  * @e: ELF header
  */
-void print_type(char *e)
+void print_type(unsigned char *e)
 {
 	int i = e[5] == 1 ? 16 : 17;
 	char *type[4] = {"REL (Relocatable", "EXEC (Executable",
@@ -121,7 +121,7 @@ void print_type(char *e)
  * print_entry - prints the entry point of the ELF header file.
  * @e: ELF header
  */
-void print_entry(char *e)
+void print_entry(unsigned char *e)
 {
 	uint64_t addr;
 
@@ -140,7 +140,7 @@ void print_entry(char *e)
  * Return: 0 on success,
  * or the corresponding error code (97, 98, 99, or 100) on failure.
  */
-int main(int ac, char *av[])
+int main(int __attribute__((unused)) ac, char *av[])
 {
 	Elf64_Ehdr *hdr;
 	int op, re, i;
