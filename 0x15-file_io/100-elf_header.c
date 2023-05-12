@@ -40,6 +40,20 @@ void close_fd(int fd)
 }
 
 /**
+ * print_magic - prints the magic numbers of the ELF header file.
+ * @e: ELF header
+ */
+void print_magic(unsigned char *e)
+{
+	int i;
+
+	printf("  Magic:   ");
+	for (i = 0; i < 15; i++)
+		printf("%02x ", e[i]);
+	printf("%02x\n", e[i]);
+}
+
+/**
  * print_class - prints the class of the ELF header file.
  * @e: ELF header
  */
@@ -58,22 +72,13 @@ void print_class(unsigned char *e)
  */
 void print_data(unsigned char *e)
 {
+	char *data = e[5] == 1 ? "little endian" : e[5] == 2 ? "big endian"
+														 : NULL;
 	printf("  %-35s", "Data:");
-
-	switch (e[EI_DATA])
-	{
-	case ELFDATANONE:
-		printf("none\n");
-		break;
-	case ELFDATA2LSB:
-		printf("2's complement, little endian\n");
-		break;
-	case ELFDATA2MSB:
-		printf("2's complement, big endian\n");
-		break;
-	default:
-		printf("<unknown: %x>\n", e[EI_CLASS]);
-	}
+	if (data)
+		printf("2's complement, %s\n", data);
+	else
+		printf("<unknown: %x>\n", e[5]);
 }
 
 /**
@@ -151,7 +156,7 @@ void print_entry(unsigned char *e)
 int main(int __attribute__((unused)) ac, char *av[])
 {
 	Elf64_Ehdr *hdr;
-	int op, re, i;
+	int op, re;
 
 	op = open(av[1], O_RDONLY);
 	if (op == -1)
@@ -164,20 +169,20 @@ int main(int __attribute__((unused)) ac, char *av[])
 		err(av[1], 98);
 	}
 
-	re = read(op, hdr, 32);
+	re = read(op, hdr, sizeof(Elf64_Ehdr));
 	if (re == -1)
+	{
+		free(hdr);
+		close_fd(op);
 		err(av[1], 98);
+	}
 
 	if (hdr->e_ident[0] != 127 || hdr->e_ident[1] != 'E' ||
 		hdr->e_ident[2] != 'L' || hdr->e_ident[3] != 'F')
 		err("", 127);
 
-	printf("ELF Header:\n  Magic:   ");
-	for (i = 0; i < 15; i++)
-		printf("%02x ", hdr->e_ident[i]);
-	printf("%02x", hdr->e_ident[i]);
-
-	printf("\n");
+	printf("ELF Header:\n");
+	print_magic(hdr->e_ident);
 	print_class(hdr->e_ident);
 	print_data(hdr->e_ident);
 	print_vrs(hdr->e_ident);
