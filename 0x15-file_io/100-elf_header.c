@@ -46,7 +46,8 @@ void close_fd(int fd)
 void print_class(unsigned char *e)
 {
 	printf("  %-35s", "Class:");
-	printf("%s\n", e[EI_CLASS] == 2 ? "ELF64" : e[EI_CLASS] == 1 ? "ELF32" : "");
+	printf("%s\n", e[EI_CLASS] == 2 ? "ELF64" : e[EI_CLASS] == 1 ? "ELF32"
+																 : "");
 	if (e[EI_CLASS] != 1 && e[EI_CLASS] != 2)
 		printf("<unknown: %x>\n", e[EI_CLASS]);
 }
@@ -58,7 +59,7 @@ void print_class(unsigned char *e)
 void print_data(unsigned char *e)
 {
 	char *data = e[5] == 1 ? "little endian" : e[5] == 2 ? "big endian"
-		: NULL;
+														 : NULL;
 	printf("  %-35s", "Data:");
 	if (data)
 		printf("2's complement, %s\n", data);
@@ -82,20 +83,43 @@ void print_vrs(unsigned char *e)
  */
 void print_osabi(unsigned char *e)
 {
-	char *os[18] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU", "",
-		"Solaris", "AIX", "IRIX", "FreeBSD", "Tru64", "Novell Modesto",
-		"OpenBSD", "Open VMS", "NonStop Kernel", "AROS", "Fenix OS",
-		"CloudABI"};
-
 	printf("  %-35s", "OS/ABI:");
-	if (e[EI_OSABI] <= 17)
-		printf("UNIX - %s\n", os[(int)e[EI_OSABI]]);
-	else if (e[EI_OSABI] == ELFOSABI_ARM)
-		printf("UNIX - ARM\n");
-	else if (e[EI_OSABI] == ELFOSABI_STANDALONE)
-		printf("UNIX - Standalone App\n");
-	else
+
+	switch (e[EI_OSABI])
+	{
+	case ELFOSABI_NONE:
+		printf("UNIX - System V\n");
+		break;
+	case ELFOSABI_HPUX:
+		printf("UNIX - HP-UX\n");
+		break;
+	case ELFOSABI_NETBSD:
+		printf("UNIX - NetBSD\n");
+		break;
+	case ELFOSABI_LINUX:
+		printf("UNIX - Linux\n");
+		break;
+	case ELFOSABI_SOLARIS:
+		printf("UNIX - Solaris\n");
+		break;
+	case ELFOSABI_IRIX:
+		printf("UNIX - IRIX\n");
+		break;
+	case ELFOSABI_FREEBSD:
+		printf("UNIX - FreeBSD\n");
+		break;
+	case ELFOSABI_TRU64:
+		printf("UNIX - TRU64\n");
+		break;
+	case ELFOSABI_ARM:
+		printf("ARM\n");
+		break;
+	case ELFOSABI_STANDALONE:
+		printf("Standalone App\n");
+		break;
+	default:
 		printf("<unknown: %x>\n", e[EI_OSABI]);
+	}
 }
 
 /**
@@ -106,7 +130,7 @@ void print_type(unsigned char *e)
 {
 	int i = e[5] == 1 ? 16 : 17;
 	char *type[4] = {"REL (Relocatable", "EXEC (Executable",
-		"DYN (Shared object", "CORE (Core"};
+					 "DYN (Shared object", "CORE (Core"};
 
 	printf("  %-35s", "Type:");
 	if (e[i] > 0 && e[i] < 5)
@@ -159,7 +183,7 @@ int main(int __attribute__((unused)) ac, char *av[])
 		err(av[1], 98);
 
 	if (hdr->e_ident[0] != 127 || hdr->e_ident[1] != 'E' ||
-	hdr->e_ident[2] != 'L' || hdr->e_ident[3] != 'F')
+		hdr->e_ident[2] != 'L' || hdr->e_ident[3] != 'F')
 		err("", 127);
 
 	printf("ELF Header:\n  Magic:   ");
