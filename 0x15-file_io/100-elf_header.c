@@ -60,9 +60,9 @@ void print_magic(unsigned char *e)
 void print_class(unsigned char *e)
 {
 	printf("  %-35s", "Class:");
-	printf("%s\n", e[EI_CLASS] == 2 ? "ELF64" : e[EI_CLASS] == 1 ? "ELF32"
-																 : "");
-	if (e[EI_CLASS] != 1 && e[EI_CLASS] != 2)
+	printf("%s\n", e[EI_CLASS] == ELFCLASS64 ? "ELF64" :
+					e[EI_CLASS] == ELFCLASS32 ? "ELF32" : "");
+	if (e[EI_CLASS] != ELFCLASS64 && e[EI_CLASS] != ELFCLASS32)
 		printf("<unknown: %x>\n", e[EI_CLASS]);
 }
 
@@ -72,13 +72,13 @@ void print_class(unsigned char *e)
  */
 void print_data(unsigned char *e)
 {
-	char *data = e[5] == 1 ? "little endian" : e[5] == 2 ? "big endian"
-														 : NULL;
+	char *data = e[EI_DATA] == ELFDATA2LSB ? "little endian" :
+					e[EI_DATA] == ELFDATA2MSB ? "big endian" : NULL;
 	printf("  %-35s", "Data:");
 	if (data)
 		printf("2's complement, %s\n", data);
 	else
-		printf("<unknown: %x>\n", e[5]);
+		printf("<unknown: %x>\n", e[EI_DATA]);
 }
 
 /**
@@ -103,12 +103,12 @@ void print_osabi(unsigned char *e)
 					"CloudABI"};
 
 	printf("  %-35s", "OS/ABI:");
-	if (e[EI_OSABI] <= 17)
-		printf("UNIX - %s\n", os[(int)e[EI_OSABI]]);
-	else if (e[EI_OSABI] == ELFOSABI_ARM)
+	if (e[EI_OSABI] == ELFOSABI_ARM)
 		printf("UNIX - ARM\n");
 	else if (e[EI_OSABI] == ELFOSABI_STANDALONE)
 		printf("UNIX - Standalone App\n");
+	else if (e[EI_OSABI] <= 17)
+		printf("UNIX - %s\n", os[(int)e[EI_OSABI]]);
 	else
 		printf("<unknown: %x>\n", e[EI_OSABI]);
 }
@@ -119,7 +119,7 @@ void print_osabi(unsigned char *e)
  */
 void print_type(unsigned char *e)
 {
-	int i = e[5] == 1 ? 16 : 17;
+	int i = e[EI_DATA] == 1 ? 16 : 17;
 	char *type[4] = {"REL (Relocatable", "EXEC (Executable",
 					 "DYN (Shared object", "CORE (Core"};
 
