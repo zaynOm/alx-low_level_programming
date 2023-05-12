@@ -136,19 +136,27 @@ void print_type(unsigned char *e)
 }
 
 /**
- * print_entry - prints the entry point of the ELF header file.
- * @e: ELF header
+ * print_entry - Prints the entry point of an ELF header.
+ *
+ * @e_entry: The address of the ELF entry point.
+ * @e_ident: A pointer to an array containing the ELF class.
  */
-void print_entry(unsigned char *e)
+void print_entry(unsigned long int e_entry, unsigned char *e_ident)
 {
-	uint64_t addr;
+	printf("  Entry point address:               ");
 
-	if (e[EI_CLASS] == ELFCLASS64)
-		addr = (uintptr_t)(*(uint64_t *)(e + 0x18));
+	if (e_ident[EI_DATA] == ELFDATA2MSB)
+	{
+		e_entry = ((e_entry << 8) & 0xFF00FF00) |
+			  ((e_entry >> 8) & 0xFF00FF);
+		e_entry = (e_entry << 16) | (e_entry >> 16);
+	}
+
+	if (e_ident[EI_CLASS] == ELFCLASS32)
+		printf("%#x\n", (unsigned int)e_entry);
 
 	else
-		addr = (uintptr_t)(*(uint32_t *)(e + 0x18));
-	printf("  %-35s0x%lx\n", "Entry point address:", addr);
+		printf("%#lx\n", e_entry);
 }
 /**
  * main - prints the information contained in the ELF header of a given file
@@ -194,7 +202,7 @@ int main(int __attribute__((unused)) ac, char *av[])
 	print_osabi(hdr->e_ident);
 	printf("  %-35s%d\n", "ABI Version:", hdr->e_ident[EI_ABIVERSION]);
 	print_type(hdr->e_ident);
-	print_entry(hdr->e_ident);
+	print_entry(hdr->e_entry, hdr->e_ident);
 
 	free(hdr);
 	close_fd(op);
