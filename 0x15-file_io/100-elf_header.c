@@ -60,10 +60,11 @@ void print_magic(unsigned char *e)
 void print_class(unsigned char *e)
 {
 	printf("  %-35s", "Class:");
-	printf("%s\n", e[EI_CLASS] == ELFCLASS64 ? "ELF64" :
-					e[EI_CLASS] == ELFCLASS32 ? "ELF32" : "");
-	if (e[EI_CLASS] != ELFCLASS64 && e[EI_CLASS] != ELFCLASS32)
+	if (e[EI_CLASS] > 2)
 		printf("<unknown: %x>\n", e[EI_CLASS]);
+	else
+		printf("%s\n", e[EI_CLASS] == ELFCLASS64 ? "ELF64" :
+						e[EI_CLASS] == ELFCLASS32 ? "ELF32" : "none");
 }
 
 /**
@@ -72,13 +73,15 @@ void print_class(unsigned char *e)
  */
 void print_data(unsigned char *e)
 {
-	char *data = e[EI_DATA] == ELFDATA2LSB ? "little endian" :
-					e[EI_DATA] == ELFDATA2MSB ? "big endian" : NULL;
+
 	printf("  %-35s", "Data:");
-	if (data)
-		printf("2's complement, %s\n", data);
-	else
+	if (e[EI_DATA] > 2)
 		printf("<unknown: %x>\n", e[EI_DATA]);
+	else if (e[EI_DATA] == 0)
+		printf("none\n");
+	else
+		printf("2's complement, %s\n", e[EI_DATA] == ELFDATA2LSB ?
+			"little endian" : e[EI_DATA] == ELFDATA2MSB ? "big endian" : "");
 }
 
 /**
@@ -124,7 +127,9 @@ void print_type(unsigned char *e)
 					 "DYN (Shared object", "CORE (Core"};
 
 	printf("  %-35s", "Type:");
-	if (e[i] > 0 && e[i] < 5)
+	if (e[i] == ET_NONE)
+		printf("NONE (none)\n");
+	else if (e[i] > 0 && e[i] < 5)
 		printf("%s file)\n", type[(int)e[i] - 1]);
 	else
 		printf("<unknown>: %x\n", e[i]);
