@@ -58,13 +58,22 @@ void print_class(unsigned char *e)
  */
 void print_data(unsigned char *e)
 {
-	char *data = e[5] == 1 ? "little endian" : e[5] == 2 ? "big endian"
-														 : NULL;
 	printf("  %-35s", "Data:");
-	if (data)
-		printf("2's complement, %s\n", data);
-	else
-		printf("<unknown: %x>\n", e[5]);
+
+	switch (e[EI_DATA])
+	{
+	case ELFDATANONE:
+		printf("none\n");
+		break;
+	case ELFDATA2LSB:
+		printf("2's complement, little endian\n");
+		break;
+	case ELFDATA2MSB:
+		printf("2's complement, big endian\n");
+		break;
+	default:
+		printf("<unknown: %x>\n", e[EI_CLASS]);
+	}
 }
 
 /**
@@ -83,43 +92,20 @@ void print_vrs(unsigned char *e)
  */
 void print_osabi(unsigned char *e)
 {
-	printf("  %-35s", "OS/ABI:");
+	char *os[18] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU", "",
+					"Solaris", "AIX", "IRIX", "FreeBSD", "Tru64", "Novell Modesto",
+					"OpenBSD", "Open VMS", "NonStop Kernel", "AROS", "Fenix OS",
+					"CloudABI"};
 
-	switch (e[EI_OSABI])
-	{
-	case ELFOSABI_NONE:
-		printf("UNIX - System V\n");
-		break;
-	case ELFOSABI_HPUX:
-		printf("UNIX - HP-UX\n");
-		break;
-	case ELFOSABI_NETBSD:
-		printf("UNIX - NetBSD\n");
-		break;
-	case ELFOSABI_LINUX:
-		printf("UNIX - Linux\n");
-		break;
-	case ELFOSABI_SOLARIS:
-		printf("UNIX - Solaris\n");
-		break;
-	case ELFOSABI_IRIX:
-		printf("UNIX - IRIX\n");
-		break;
-	case ELFOSABI_FREEBSD:
-		printf("UNIX - FreeBSD\n");
-		break;
-	case ELFOSABI_TRU64:
-		printf("UNIX - TRU64\n");
-		break;
-	case ELFOSABI_ARM:
-		printf("ARM\n");
-		break;
-	case ELFOSABI_STANDALONE:
-		printf("Standalone App\n");
-		break;
-	default:
+	printf("  %-35s", "OS/ABI:");
+	if (e[EI_OSABI] <= 17)
+		printf("UNIX - %s\n", os[(int)e[EI_OSABI]]);
+	else if (e[EI_OSABI] == ELFOSABI_ARM)
+		printf("UNIX - ARM\n");
+	else if (e[EI_OSABI] == ELFOSABI_STANDALONE)
+		printf("UNIX - Standalone App\n");
+	else
 		printf("<unknown: %x>\n", e[EI_OSABI]);
-	}
 }
 
 /**
