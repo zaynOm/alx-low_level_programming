@@ -1,4 +1,7 @@
 #include "hash_tables.h"
+#define _GNU_SOURCE
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * hash_table_set - adds an element to the hash table.
