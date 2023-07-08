@@ -84,59 +84,67 @@ void hashdllsort(shash_table_t *ht, shash_node_t *movnode)
 }
 
 /**
- * hash_table_set - short description
+ * shash_table_set - set or update key in sorted hash table
  *
- * Description: long description
+ * @ht: hash table to set key on
+ * @key: key to set
+ * @value: value to set for key
  *
- * @ht: hash table
- * @key: key
- * @value: value
- *
- * Return: return description
+ * Return: 1 if success, 0 if failure
  */
-
-int hash_table_set(hash_table_t *ht, const char *key, const char *value)
+int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 {
-	unsigned long int index = 0;
-	hash_node_t *new_node = NULL, *old_head = NULL;
+	unsigned long int idx;
+	shash_node_t *ptr, *newnode;
+	char *tmp;
 
-	if (key == NULL || value == NULL || ht == NULL)
+	if (ht == NULL || ht->array == NULL || ht->size == 0
+			|| key == NULL || *key == 0 || value == NULL)
 		return (0);
-	if (strlen(key) == 0)
-		return (0);
-	new_node = (hash_node_t *) malloc(sizeof(hash_node_t));
-	if (new_node == NULL)
-		return (0);
-	index = key_index((const unsigned char *) key, ht->size);
-	new_node->key = (char *) strdup(key);
-	new_node->value = (char *) strdup(value);
-	new_node->next = NULL;
-	if ((ht->array)[index] == NULL)
+	idx = key_index((const unsigned char *) key, ht->size);
+	ptr = ht->array[idx];
+	while (ptr != NULL)
 	{
-		(ht->array)[index] = new_node;
-		return (1);
+		if (strcmp(ptr->key, key) == 0)
+			break;
+		ptr = ptr->next;
+	}
+	if (ptr == NULL)
+	{
+		newnode = malloc(sizeof(shash_node_t));
+		if (newnode == NULL)
+			return (0);
+		newnode->key = strdup(key);
+		if (newnode->key == NULL)
+		{
+			free(newnode);
+			return (0);
+		}
+		newnode->value = strdup(value);
+		if (newnode->value == NULL)
+		{
+			free(newnode->key);
+			free(newnode);
+			return (0);
+		}
+		newnode->next = ht->array[idx];
+		ht->array[idx] = newnode;
+		newnode->sprev = NULL;
+		newnode->snext = NULL;
+		hashdllsort(ht, newnode);
 	}
 	else
 	{
-		old_head = (ht->array)[index];
-		while (old_head)
-		{
-			if (strcmp(old_head->key, key) == 0)
-			{
-				free(old_head->value);
-				old_head->value = (char *) strdup(value);
-				free(new_node->key);
-				free(new_node->value);
-				free(new_node);
-				return (1);
-			}
-			old_head = old_head->next;
-		}
-		old_head = (ht->array)[index];
-		new_node->next = old_head;
-		(ht->array)[index] = new_node;
-		return (1);
+		if (strcmp(value, ptr->value) == 0)
+			return (1);
+		tmp = strdup(value);
+		if (value == NULL)
+			return (0);
+		free(ptr->value);
+		ptr->value = tmp;
+		hashdllsort(ht, ptr);
 	}
+	return (1);
 }
 
 /**
