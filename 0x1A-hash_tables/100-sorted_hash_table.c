@@ -84,55 +84,45 @@ void hashdllsort(shash_table_t *ht, shash_node_t *movnode)
 }
 
 /**
- * shash_table_set - set or update key in sorted hash table
- *
- * @ht: hash table to set key on
- * @key: key to set
- * @value: value to set for key
- *
- * Return: 1 if success, 0 if failure
+ * hash_table_set - adds an element to the hash table.
+ * @ht: Hash table
+ * @key: The key
+ * @value: The value of the key
+ * Return: 1 if it succeeded, 0 otherwise
  */
-int shash_table_set(shash_table_t *ht, const char *key, const char *value)
+int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 {
-	unsigned long int idx;
-	shash_node_t *ptr, *newnode;
-	char *tmp;
+	hash_node_t *new_node;
+	unsigned long int index = 0;
 
-	if (ht == NULL || ht->array == NULL || ht->size == 0
-			|| key == NULL || *key == 0 || value == NULL)
+	if (!ht || !key || key[0] == '\0')
 		return (0);
-	idx = key_index((const unsigned char *) key, ht->size);
-	ptr = ht->array[idx];
-	while (ptr || strcmp(ptr->key, key) != 0)
-		ptr = ptr->next;
-	if (ptr == NULL)
+	index = key_index((const unsigned char *)key, ht->size);
+
+	new_node = malloc(sizeof(hash_node_t));
+	if (!new_node)
+		return (0);
+	new_node->key = malloc(strlen(key) + 1);
+	if (!new_node->key)
 	{
-		newnode = malloc(sizeof(shash_node_t));
-		if (newnode == NULL)
-			return (0);
-		newnode->key = strdup(key);
-		if (newnode->key == NULL)
-		{
-			free(newnode);
-			return (0);
-		}
-		newnode->value = strdup(value);
-		if (newnode->value == NULL)
-		{
-			free(newnode->key), free(newnode);
-			return (0);
-		}
-		newnode->next = ht->array[idx], ht->array[idx] = newnode;
-		newnode->sprev = NULL, newnode->snext = NULL;
-		hashdllsort(ht, newnode);
-	}
-	if (strcmp(value, ptr->value) == 0)
-		return (1);
-	tmp = strdup(value);
-	if (value == NULL)
+		free(new_node);
 		return (0);
-	free(ptr->value), ptr->value = tmp;
-	hashdllsort(ht, ptr);
+	}
+	new_node->value = malloc(strlen(value) + 1);
+	if (!new_node->value)
+	{
+		free(new_node->key);
+		free(new_node);
+		return (0);
+	}
+	strcpy(new_node->key, key);
+	strcpy(new_node->value, value);
+	if (ht->array[index])
+		new_node->next = ht->array[index];
+	else
+		new_node->next = NULL;
+	ht->array[index] = new_node;
+
 	return (1);
 }
 
