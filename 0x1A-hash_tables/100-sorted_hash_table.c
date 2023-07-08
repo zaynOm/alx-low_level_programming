@@ -5,7 +5,7 @@
 #include <string.h>
 
 /**
- * shash_table_t - allocates space for a sorted hash table
+ * shash_table_create - allocates space for a sorted hash table
  *
  * @size: size of table
  *
@@ -40,7 +40,7 @@ shash_table_t *shash_table_create(unsigned long int size)
  * hash table's sorted list
  *
  * @ht: hash table with sorted dll
- * @node: address of node
+ * @movnode: address of node
  *
  * Return: void
  */
@@ -67,7 +67,7 @@ void hashdllsort(shash_table_t *ht, shash_node_t *movnode)
 	ptr = ptr->snext;
 	while (ptr != NULL)
 	{
-		if(strcmp(movnode->key, ptr->key) < 0)
+		if (strcmp(movnode->key, ptr->key) < 0)
 		{
 			movnode->snext = ptr;
 			movnode->sprev = ptr->sprev;
@@ -99,16 +99,12 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 	char *tmp;
 
 	if (ht == NULL || ht->array == NULL || ht->size == 0
-	    || key == NULL || *key == 0 || value == NULL)
+			|| key == NULL || *key == 0 || value == NULL)
 		return (0);
 	idx = key_index((const unsigned char *) key, ht->size);
 	ptr = ht->array[idx];
-	while (ptr != NULL)
-	{
-		if (strcmp(ptr->key, key) == 0)
-			break;
+	while (ptr || strcmp(ptr->key, key) != 0)
 		ptr = ptr->next;
-	}
 	if (ptr == NULL)
 	{
 		newnode = malloc(sizeof(shash_node_t));
@@ -123,27 +119,20 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 		newnode->value = strdup(value);
 		if (newnode->value == NULL)
 		{
-			free(newnode->key);
-			free(newnode);
+			free(newnode->key), free(newnode);
 			return (0);
 		}
-		newnode->next = ht->array[idx];
-		ht->array[idx] = newnode;
-		newnode->sprev = NULL;
-		newnode->snext = NULL;
+		newnode->next = ht->array[idx], ht->array[idx] = newnode;
+		newnode->sprev = NULL, newnode->snext = NULL;
 		hashdllsort(ht, newnode);
 	}
-	else
-	{
-		if (strcmp(value, ptr->value) == 0)
-			return (1);
-		tmp = strdup(value);
-		if (value == NULL)
-			return (0);
-		free(ptr->value);
-		ptr->value = tmp;
-		hashdllsort(ht, ptr);
-	}
+	if (strcmp(value, ptr->value) == 0)
+		return (1);
+	tmp = strdup(value);
+	if (value == NULL)
+		return (0);
+	free(ptr->value), ptr->value = tmp;
+	hashdllsort(ht, ptr);
 	return (1);
 }
 
@@ -163,7 +152,7 @@ char *shash_table_get(const shash_table_t *ht, const char *key)
 	idx = key_index((const unsigned char *) key, ht->size);
 	ptr = ht->array[idx];
 	while (ptr != NULL)
-		if(strcmp(ptr->key, key) == 0)
+		if (strcmp(ptr->key, key) == 0)
 			return (strdup(ptr->value));
 	return (NULL);
 }
@@ -220,7 +209,10 @@ void shash_table_print_rev(const shash_table_t *ht)
 	printf("}\n");
 }
 
-	
+/**
+ * shash_table_delete - ....
+ * @ht: ...
+ */
 void shash_table_delete(shash_table_t *ht)
 {
 	shash_node_t *ptr, *next;
