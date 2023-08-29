@@ -7,4 +7,4 @@ all: $(OBJ)
 	$(CC) $(OBJ) -o $(NAME)
 
 %.o: %.c
-	$(CC) $<
+	$(CC) -c $<
