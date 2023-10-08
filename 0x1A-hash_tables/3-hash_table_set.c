@@ -1,0 +1,61 @@
+#include "hash_tables.h"
+#include <stdio.h>
+
+/**
+ * create_node - creates a new hash element.
+ * @key: the key.
+ * @value: the value associated with the key.
+ *
+ * Return: the new hash element.
+ */
+hash_node_t *create_node(const char *key, const char *value)
+{
+	hash_node_t *item = malloc(sizeof(hash_node_t));
+
+	item->key = malloc(strlen(key) + 1);
+	item->value = malloc(strlen(value) + 1);
+	strcpy(item->key, key);
+	strcpy(item->value, value);
+	item->next = NULL;
+
+	return (item);
+}
+
+/**
+ * hash_table_set - adds an element to the hash table.
+ * @ht:  the hash table to add or update the key/value to.
+ * @key: the key.
+ * @value: the value asspciated with the key.
+ *
+ * Return: 1 if it succeeded, 0 otherwise.
+ */
+int hash_table_set(hash_table_t *ht, const char *key, const char *value)
+{
+	unsigned long int index;
+	hash_node_t *item, *curr;
+
+	if (!ht || !key || !value || strlen(key) == 0)
+		return (0);
+
+	index = key_index((const unsigned char *)key, ht->size);
+	item = create_node(key, value);
+	curr = ht->array[index];
+
+	while (curr)
+	{
+		if (strcmp(curr->key, key) == 0)
+		{
+			curr->value = strdup(value);
+			if (!curr->value)
+				return (0);
+			return (1);
+		}
+		curr = curr->next;
+	}
+	item->next = ht->array[index];
+	ht->array[index] = item;
+
+	printf("%lu  %s\n", index, key);
+
+	return (1);
+}
