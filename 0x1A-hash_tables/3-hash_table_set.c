@@ -39,20 +39,19 @@ int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 		return (0);
 
 	index = key_index((const unsigned char *)key, ht->size);
-	item = create_node(key, value);
 	curr = ht->array[index];
 
 	while (curr)
 	{
 		if (strcmp(curr->key, key) == 0)
 		{
+			free(curr->value);
 			curr->value = strdup(value);
-			if (!curr->value)
-				return (0);
 			return (1);
 		}
 		curr = curr->next;
 	}
+	item = create_node(key, strdup(value));
 	item->next = ht->array[index];
 	ht->array[index] = item;
 
