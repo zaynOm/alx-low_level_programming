@@ -51,11 +51,14 @@ int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 		}
 		curr = curr->next;
 	}
-	item = create_node(key, strdup(value));
+	item = create_node(key, value);
+	if (item->key == NULL)
+	{
+		free(item);
+		return (0);
+	}
 	item->next = ht->array[index];
 	ht->array[index] = item;
-
-	printf("%lu  %s\n", index, key);
 
 	return (1);
 }
