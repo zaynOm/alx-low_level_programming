@@ -6,32 +6,26 @@
  */
 void hash_table_print(const hash_table_t *ht)
 {
-	char **keys = malloc(sizeof(char *) * ht->size);
 	hash_node_t *temp;
-	unsigned long int j = 0, i = 0;
+	char *sep = "";
+	unsigned long int i = 0;
+
+	if (!ht)
+		return;
 
 	printf("{");
 	while (ht->size > i)
 	{
 		temp = ht->array[i];
-		if (temp)
-		{
-			printf("'%s': '%s', ", temp->key, temp->value);
-			keys[j++] = temp->key;
-		}
-		i++;
-	}
-	i = 0;
-	while (j > i)
-	{
-		temp = ht->array[key_index((const unsigned char *)keys[i], ht->size)]->next;
 
 		while (temp)
 		{
-			printf("'%s': '%s', ", temp->key, temp->value);
+			printf("%s'%s': '%s'", sep, temp->key, temp->value);
+			sep = ", ";
 			temp = temp->next;
 		}
 		i++;
 	}
+
 	printf("}\n");
 }
