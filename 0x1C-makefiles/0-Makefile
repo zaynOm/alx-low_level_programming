@@ -1,7 +1,7 @@
 all: school
 
 school: main.o school.o
-    gcc -o school main.o school.o
+    gcc main.o school.o -o school
 
 main.o: main.c
     gcc -c main.c
