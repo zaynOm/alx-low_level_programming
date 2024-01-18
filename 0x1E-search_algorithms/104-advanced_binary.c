@@ -14,11 +14,6 @@ int recursion_binary(int *array, size_t left, size_t right, int value)
 {
 	size_t mid, i;
 
-	if (!array)
-		return (-1);
-
-	mid = (right + left) / 2;
-
 	if (left > right)
 		return (-1);
 
@@ -26,6 +21,8 @@ int recursion_binary(int *array, size_t left, size_t right, int value)
 	for (i = left + 1; i <= right; i++)
 		printf(", %d", array[i]);
 	printf("\n");
+
+	mid = (right + left) / 2;
 
 	if (array[mid] < value)
 		left = mid + 1;
@@ -49,5 +46,8 @@ int recursion_binary(int *array, size_t left, size_t right, int value)
  */
 int advanced_binary(int *array, size_t size, int value)
 {
+	if (!array)
+		return (-1);
+
 	return (recursion_binary(array, 0, size - 1, value));
 }
